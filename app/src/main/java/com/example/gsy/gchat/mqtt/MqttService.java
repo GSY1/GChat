@@ -5,135 +5,93 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.compat.BuildConfig;
 import android.util.Log;
+import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.gsy.gchat.bean.Message;
+
+import org.eclipse.paho.android.service.BuildConfig;
 
 /**
- * Created by GSY on 2019/4/22.
+ * Created by GSY on 2019/5/14.
+ * 作用：创建一个服务用于连接服务端和接收和发送数据
  */
 
-public class MqttService extends Service implements MqttLister {
+public class MqttService extends Service {
 
-    private  static MqttConfig mqttConfig;
-    private static List<MqttLister>  mqttListerList = new ArrayList<>();
+    private final String TAG = "MqttServiceLog";
+    private MqttMethod mqttMethod;
+    private Message ReceiveMessage;
+    private String SendMessage;
+    private Context context;
+    private int state;
+    private String Topic;
 
-
-    public void start(Context context){
-        Intent startIntent = new Intent(context,MqttService.class);
-        context.startActivity(startIntent);
+    public MqttService(Context context){
+        super();
+        this.context = context;
     }
 
-    public void stop(Context context){
-        Intent stopIntent = new Intent(context,MqttService.class);
-        context.startActivity(stopIntent);
+    @Override
+    public void onCreate(){
+        super.onCreate();
+        if (BuildConfig.DEBUG){
+            Log.i(TAG,"onCreate");
+        }
+        if (mqttMethod == null){
+            mqttMethod = new MqttMethod(this.context);
+        }
+        mqttMethod.Connect();
+        state = mqttMethod.getState();
+        if (state == 2){
+            Toast.makeText(this.context,"连接不到服务器",Toast.LENGTH_SHORT).show();
+            mqttMethod.reConnect();
+        }
     }
-
 
 
     @Nullable
-
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        if (BuildConfig.DEBUG) Log.i("MqttTest", "onCreate: ");
-        if (mqttConfig==null) {
-            mqttConfig=new MqttConfig(this);
-        }
-        mqttConfig.connectMqtt();
-    }
-
-
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mqttConfig.disConnect();
-        mqttConfig=null;
-        mqttListerList.clear();
-    }
-
-    public static MqttConfig getMqttConfig(){
-        return mqttConfig;
-    }
-
-    public static void addMqttLister(MqttLister lister){
-        if (! mqttListerList.contains(lister)){
-            mqttListerList.add(lister);
-        }
-    }
-
-    public static void reMoveMqttLister(MqttLister lister){
-        mqttListerList.remove(lister);
-    }
-
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
 
-    @Override
-    public void Connection() {
-           for (MqttLister mqttLister : mqttListerList){
-               mqttLister.Connection();
-           }
+
+    public String getSendMessage() {
+        return SendMessage;
     }
 
-    @Override
-    public void Fail() {
-
+    public void setSendMessage(String sendMessage) {
+        SendMessage = sendMessage;
+        if (state == 2){
+            Toast.makeText(this.context,"连接不到服务器",Toast.LENGTH_SHORT).show();
+        }
+        mqttMethod.reConnect();//重新连接服务器
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mqttConfig.connectMqtt();
-                try {
-                    Thread.sleep(2000);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+                mqttMethod.SendMsg(Topic,SendMessage,0);
+                Log.i("MqttSendMessageTest","赋值成功:"+SendMessage);
             }
         }).start();
-
-        for (MqttLister mqttLister : mqttListerList){
-            mqttLister.Fail();
-        }
-
     }
 
-    @Override
-    public void Lost() {
+    public Message getReceiveMessage() {
+
+        if (state == 2){
+            mqttMethod.reConnect();//重新连接服务器
+        }
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mqttConfig.connectMqtt();
-                try {
-                    Thread.sleep(2000);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+                mqttMethod.ReceiveMsg();
+                ReceiveMessage = mqttMethod.getMessage();
             }
         }).start();
-
-        for (MqttLister mqttLister : mqttListerList){
-            mqttLister.Lost();
-        }
+        return ReceiveMessage;
     }
 
-    @Override
-    public void Receiver(String message) {
-
-        for (MqttLister mqttLister : mqttListerList){
-            mqttLister.Receiver(message);
-        }
-    }
-
-    @Override
-    public void Send() {
-        for (MqttLister mqttLister : mqttListerList){
-            mqttLister.Send();
-        }
+    public void setReceiveMessage(Message receiveMessage) {
+        ReceiveMessage = receiveMessage;
     }
 }

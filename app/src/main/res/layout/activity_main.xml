@@ -1,52 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-         android:layout_width="match_parent"
-         android:layout_height="match_parent"
-        android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
-     <android.support.v7.widget.Toolbar
-         android:id="@+id/chatBar"
-         android:layout_width="match_parent"
-         android:layout_height="50dp"
-         android:background="?attr/colorPrimary"
-         android:elevation="4dp"
-         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-     </android.support.v7.widget.Toolbar>
-
-     <android.support.v7.widget.RecyclerView
-         android:id="@+id/Message"
+     <FrameLayout
+         android:id="@+id/content"
          android:layout_width="match_parent"
          android:layout_height="0dp"
          android:layout_weight="1">
 
-     </android.support.v7.widget.RecyclerView>
+          <android.support.v4.view.ViewPager
+              android:id="@+id/G_viewPager"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
 
+          </android.support.v4.view.ViewPager>
+     </FrameLayout>
 
-     <LinearLayout
+     <View
          android:layout_width="match_parent"
-         android:layout_height="wrap_content">
+         android:background="#3399cc"
+         android:layout_height="1dp" />
 
-          <EditText
-              android:id="@+id/input"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:hint="请输入"
-              android:maxLines="2"
-              />
-
-          <Button
-              android:id="@+id/send"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="发送"
-              />
-
-     </LinearLayout>
-
-
+     <android.support.design.widget.BottomNavigationView
+         android:id="@+id/navigation"
+         android:layout_width="match_parent"
+         android:layout_height="67dp"
+         android:layout_gravity="bottom"
+         android:background="?android:attr/windowBackground"
+         app:menu="@menu/navigation" />
 </LinearLayout>

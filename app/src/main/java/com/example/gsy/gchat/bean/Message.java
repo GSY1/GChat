@@ -3,6 +3,7 @@ package com.example.gsy.gchat.bean;
 /**
  * Created by GSY on 2019/4/21.
  * 作用：Message类
+ * isReciver作用：如果是true的话就是接收数据，如果是false的话就是发送数据
  */
 
 public class Message {
@@ -10,7 +11,11 @@ public class Message {
     private String context;
     private String clientID;
     private String time;
-    private int Type;
+    private boolean isReciver;
+
+
+
+
 
     public String getContext() {
         return context;
@@ -20,12 +25,12 @@ public class Message {
         this.context = context;
     }
 
-    public int getType() {
-        return Type;
+    public boolean isReciver() {
+        return isReciver;
     }
 
-    public void setType(int type) {
-        Type = type;
+    public void setReciver(boolean reciver) {
+        isReciver = reciver;
     }
 
     public String getClientID() {
@@ -50,7 +55,7 @@ public class Message {
                 "context='" + context + '\'' +
                 ", clientID='" + clientID + '\'' +
                 ", time='" + time + '\'' +
-                ", Type=" + Type +
+                ", isReciver=" + isReciver +
                 '}';
     }
 }

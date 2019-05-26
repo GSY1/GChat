@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/messages"
+        android:icon="@drawable/messages"
+        android:title="消息" />
+
+    <item
+        android:id="@+id/linkman"
+        android:icon="@drawable/linkmanb"
+        android:title="联系人" />
+
+    <item
+        android:id="@+id/dynamic"
+        android:icon="@drawable/dynamicb"
+        android:title="我的" />
+
+</menu>
